@@ -1,282 +1,357 @@
 # Lecture 1 — Introduction to Deep Learning
 
-**MIT 6.S191 (2025)**
-
-**Date:** December 15, 2025
-
+**Course:** MIT 6.S191 (2025)  
+**Date:** December 15, 2025  
 **Instructor:** Alexander Amini
 
 **Video:**
 [Link](https://www.youtube.com/watch?v=alfdI7S6wCY&list=PLtBw6njQRU-rwp5__7C0oIVt26ZgjG9NI&index=1)
-
 **Slides:**
 [Link](https://introtodeeplearning.com/2025/slides/6S191_MIT_DeepLearning_L1.pdf)
 
 ---
 
-## 1. Overview
+## 📌 Executive Summary
 
-This lecture introduces the **foundations of Deep Learning**, beginning with simple neuron models and building up to modern deep neural networks. It focuses on both **intuition** and **mechanics**: how networks are constructed, how they learn, and why they generalize (or fail to).
+This lecture introduces the **foundations of deep learning**, tracing the progression from biologically inspired neuron models to modern **deep neural networks**.
 
-Key topics include:
-
-* The perceptron and dense layers
-* Forward propagation and activation functions
-* Loss functions and optimization
-* Backpropagation and gradient descent
-* Overfitting and regularization
-
----
-
-## 2. Why Deep Learning? Why Now?
-
-Traditional machine learning systems relied on **hand-engineered features**, which were:
-
-* Time-consuming
-* Brittle to changes in data
-* Hard to scale across domains
-
-Deep learning replaces manual feature design with **automatic feature learning**.
-
-### Key Enablers
-
-1. **Data** — Large-scale datasets from the internet and digital platforms
-2. **Computation** — GPUs and TPUs enabling massive parallelism
-3. **Software** — Frameworks like PyTorch, TensorFlow, and JAX
+Core ideas include:
+- Why deep learning works and why it became practical only recently
+- The perceptron and dense layers
+- Forward propagation, activation functions, and loss functions
+- Training neural networks using **gradient descent** and **backpropagation**
+- Practical considerations such as optimizers, stochastic training, overfitting, and regularization
 
 ---
 
-## 3. The Perceptron (Single Neuron)
+## 🧠 Core Concepts & Terminology
 
-The **perceptron** is the fundamental computational unit of a neural network.
+- **Artificial Intelligence (AI):** Techniques that enable machines to mimic intelligent behavior.
+- **Machine Learning (ML):** A subset of AI where models learn patterns from data instead of explicit rules.
+- **Deep Learning (DL):** A subset of ML that uses multi-layer neural networks to learn hierarchical representations.
+- **Perceptron:** A single artificial neuron that computes a weighted sum followed by a non-linear activation.
+- **Dense (Fully Connected) Layer:** A layer where each input neuron connects to every output neuron.
+- **Forward Propagation:** Computing outputs by passing inputs through network layers.
+- **Activation Function:** A non-linear function applied to neuron outputs (e.g., ReLU, Sigmoid, Tanh).
+- **Loss Function:** Quantifies the error between predictions and ground truth.
+- **Gradient Descent:** An optimization method that minimizes loss by updating weights in the direction of negative gradients.
+- **Backpropagation:** Efficient computation of gradients using the chain rule.
+- **Learning Rate:** Controls the step size of weight updates.
+- **Overfitting:** When a model memorizes training data and fails to generalize.
+- **Regularization:** Techniques that improve generalization by discouraging overly complex models.
+- **Stochastic Gradient Descent (SGD):** Gradient descent using mini-batches instead of the full dataset.
 
-![Figure 1: Single perceptron model](assets/image.png)
+---
 
-**Figure 1 intuition:**
-Each input contributes proportionally to the output via its weight. The bias shifts the activation, and the non-linearity enables expressive modeling.
+## 📝 Detailed Notes
+
+---
+
+## 1. Why Deep Learning? Why Now?
+
+Traditional machine learning relied heavily on **hand-engineered features**, which were:
+- Time-consuming
+- Brittle
+- Difficult to scale across domains
+
+Deep learning replaces feature engineering with **feature learning**, allowing models to automatically learn useful representations from raw data.
+
+Deep learning has existed for decades — so why did it take off recently?
+
+**Three key enablers:**
+
+1. **Data:** Massive datasets enabled by the internet and digitization
+2. **Computation:** GPUs and TPUs enabling large-scale parallel computation
+3. **Software:** Open-source frameworks (PyTorch, TensorFlow, JAX) lowering the barrier to entry
+
+---
+
+## 2. The Perceptron: A Single Neuron
 
 ### Forward Propagation
 
-$$
-\hat{y} = g\left(w_0 + \sum_{i=1}^{m} w_i x_i \right)
-$$
+![The Perceptron](assets/image.png)
+
+A perceptron computes:
+- A weighted sum of inputs
+- Adds a bias term
+- Applies a non-linear activation function
+
+Given inputs $x_1, \dots, x_m$ and weights $w_1, \dots, w_m$:
+
+$$\hat{y} = g\left(w_0 + \sum_{i=1}^{m} w_i x_i\right)$$
 
 Vectorized form:
 
-$$
-\hat{y} = g\left(w_0 + \mathbf{X}^\top \mathbf{W}\right)
-$$
+$$\hat{y} = g\left(w_0 + \mathbf{X}^T \mathbf{W}\right)$$
 
-Where:
+where
 
-* $$ \mathbf{X} = [x_1, \dots, x_m] $$
-* $$ \mathbf{W} = [w_1, \dots, w_m] $$
-* $$ g(\cdot) $$ is an activation function
+$$\mathbf{X} = [x_1, \dots, x_m], \quad \mathbf{W} = [w_1, \dots, w_m]$$
+
+The **bias** shifts the activation function, improving flexibility.
 
 ---
 
-## 4. Activation Functions
+### Non-Linear Activation Functions
 
-Activation functions introduce **non-linearity**, allowing neural networks to model complex relationships.
+![Common Activation Function](assets/image-1.png)
 
-![Figure 2: Common activation functions and derivatives](assets/image-1.png)
+Activation functions introduce non-linearity, allowing networks to model complex patterns.
 
-**Figure 2 intuition:**
-Without non-linear activations, stacked layers collapse into a single linear transformation.
+Common examples:
 
-### Common Functions
+**Sigmoid:**
+$$g(x) = \frac{1}{1 + e^{-x}}$$
 
-* **Sigmoid**
+**Tanh:**
+$$g(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$$
 
-$$
-g(x) = \frac{1}{1 + e^{-x}}
-$$
+**ReLU:**
+$$g(x) = \max(0, x)$$
 
-* **Tanh**
+#### Framework Implementations
 
-$$
-g(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
-$$
+**PyTorch:**
+```python
+torch.sigmoid(x)
+torch.tanh(x)
+torch.relu(x)
+```
 
-* **ReLU**
-
-$$
-g(x) = \max(0, x)
-$$
-
----
-
-## 5. Multi-Output Perceptron (Dense Layer)
-
-Multiple perceptrons can operate in parallel to produce **multiple outputs** from the same input.
-
-![Figure 3: Multi-output perceptron (dense layer)](assets/image-2.png)
-
-**Figure 3 intuition:**
-Each neuron has its own weights, allowing the layer to learn multiple features simultaneously.
-
-Key properties:
-
-* Fully connected (dense)
-* Linear if no activation is applied
-* Forms the core building block of neural networks
+**TensorFlow:**
+```python
+tf.sigmoid(x)
+tf.tanh(x)
+tf.nn.relu(x)
+```
 
 ---
 
-## 6. Single Hidden Layer Neural Network
+## 3. Multi-Output Perceptron (Dense Layer)
 
-Adding a **hidden layer** enables the network to learn intermediate representations.
+![Dense Layer](assets/image-2.png)
 
-![Figure 4: Single hidden layer neural network](assets/image-3.png)
+- Multiple perceptrons operating on the same input form a **dense layer**
+- Each neuron has its own weights and bias
+- Without an activation function, a dense layer is purely **linear**
 
-**Figure 4 intuition:**
-Hidden layers transform raw inputs into increasingly abstract features.
+### Dense Layer from Scratch
+
+#### PyTorch
+
+```python
+class MyDenseLayer(torch.nn.Module):
+    def __init__(self, input_dims, output_dims):
+        super().__init__()
+        self.w = torch.nn.Parameter(torch.randn(input_dims, output_dims))
+        self.b = torch.nn.Parameter(torch.randn(1, output_dims))
+
+    def forward(self, inputs):
+        z = torch.matmul(inputs, self.w) + self.b
+        return torch.relu(z)
+```
+
+**Built-in:** `nn.Linear(in_features, out_features)`
+
+#### TensorFlow
+
+```python
+class MyDenseLayer(tf.keras.layers.Layer):
+    def __init__(self, input_dims, output_dims):
+        super().__init__()
+        self.w = self.add_weight(shape=(input_dims, output_dims))
+        self.b = self.add_weight(shape=(output_dims,))
+
+    def call(self, inputs):
+        z = tf.matmul(inputs, self.w) + self.b
+        return tf.nn.relu(z)
+```
+
+**Built-in:** `tf.keras.layers.Dense(units, activation)`
 
 ---
 
-## 7. Deep Neural Networks
+## 4. Single Hidden Layer Neural Network
 
-Deep neural networks stack multiple hidden layers hierarchically.
+![Single Layer NN](assets/image-3.png)
 
-![Figure 5: Deep neural network architecture](assets/image-4.png)
+- Introduces a **hidden layer** between input and output
+- Hidden layers learn intermediate representations
+- Called "hidden" because their activations are not directly observed
 
-**Figure 5 intuition:**
-Lower layers learn simple features; deeper layers combine them into high-level concepts.
+**PyTorch:**
+```python
+nn.Sequential(
+    nn.Linear(input_size, hidden_size),
+    nn.ReLU(),
+    nn.Linear(hidden_size, output_size)
+)
+```
+
+**TensorFlow:**
+```python
+tf.keras.Sequential([
+    tf.keras.layers.Dense(hidden_size, activation='relu'),
+    tf.keras.layers.Dense(output_size)
+])
+```
 
 ---
 
-## 8. Loss Functions
+## 5. Deep Neural Networks
 
-To learn, a network must quantify **how wrong its predictions are**.
+![Deep Neural Network](assets/image-4.png)
 
-![Figure 6: Empirical loss over a dataset](assets/image-5.png)
+- A **deep network** stacks multiple hidden layers
+- Each layer learns increasingly abstract features
 
-**Figure 6 intuition:**
-Training minimizes the *average* loss across all data points.
+---
+
+## 6. Loss Functions
+
+![Loss Illustration](assets/image-5.png)
+
+Loss quantifies how incorrect a model's predictions are.
 
 ### Binary Cross-Entropy Loss
 
-$$
-L = - \frac{1}{N} \sum_{i=1}^{N}
-\left[
-y_i \log(\hat{y}_i) + (1 - y_i)\log(1 - \hat{y}_i)
-\right]
-$$
+Used for probabilistic binary classification.
 
-Used for probabilistic classification.
+$$L = -\frac{1}{N} \sum_{i=1}^{N} \left[ y_i \log(\hat{y}_i) + (1 - y_i)\log(1 - \hat{y}_i) \right]$$
 
----
+**PyTorch:**
+```python
+torch.nn.functional.cross_entropy(predicted, y)
+```
+
+**TensorFlow:**
+```python
+tf.reduce_mean(
+    tf.nn.softmax_cross_entropy_with_logits(y, predicted)
+)
+```
 
 ### Mean Squared Error (MSE)
 
-$$
-L = \frac{1}{2N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2
-$$
+Used for continuous regression targets.
 
-Used for regression tasks.
+$$L = \frac{1}{2N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2$$
 
----
+**PyTorch:**
+```python
+torch.nn.MSELoss(predicted, y)
+```
 
-## 9. Training Neural Networks
-
-Training seeks parameters that minimize the loss function.
-
-$$
-W^* = \arg\min_W \frac{1}{n} \sum_{i=1}^{n}
-\mathcal{L}(f(x^{(i)}; W), y^{(i)})
-$$
-
-![Figure 7: Training objective](assets/image-6.png)
+**TensorFlow:**
+```python
+tf.keras.losses.MeanSquaredError(predicted, y)
+```
 
 ---
 
-## 10. Gradient Descent
+## 7. Training Neural Networks
 
-The loss is a function of the weights and can be visualized as a surface.
+![Training Objective](assets/image-6.png)
 
-![Figure 8: Loss landscape](assets/image-7.png)
+**Goal:**
 
-**Figure 8 intuition:**
-Optimization is a search for the lowest point in this landscape.
+$$W^* = \arg\min_W \frac{1}{n} \sum_{i=1}^{n} \mathcal{L}(f(x^{(i)}; W), y^{(i)})$$
 
-### Gradient Descent Steps
+### Optimization via Gradient Descent
 
-![Figure 9: Gradient descent updates](assets/image-8.png)
+![Loss Landscape](assets/image-7.png)
 
-**Figure 9 intuition:**
-The gradient points uphill; we step in the opposite direction.
+- Loss is a function of network weights
+- Gradients indicate the direction of steepest ascent
+- We move **opposite** the gradient
 
----
+![Gradient Descent](assets/image-8.png)
 
-## 11. Backpropagation
+### Training Loop
 
-Gradients are computed efficiently using the **chain rule**.
+**PyTorch:**
+```python
+optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
 
-![Figure 10: Backpropagation through the network](assets/image-9.png)
+for epoch in range(epochs):
+    y_pred = model(x_train)
+    loss = criterion(y_pred, y_train)
+    loss.backward()
+    optimizer.step()
+    optimizer.zero_grad()
+```
 
-$$
-\frac{\partial J}{\partial w_1}
-===============================
+**TensorFlow:**
+```python
+optimizer = tf.keras.optimizers.SGD(0.01)
 
-\frac{\partial J}{\partial \hat{y}}
-\cdot
-\frac{\partial \hat{y}}{\partial z_1}
-\cdot
-\frac{\partial z_1}{\partial w_1}
-$$
-
-**Figure 10 intuition:**
-Errors flow backward, distributing responsibility across layers.
-
----
-
-## 12. Stochastic Gradient Descent
-
-Computing gradients over the full dataset is expensive.
-
-![Figure 11: Full-batch vs stochastic gradient descent](assets/image-10.png)
-
-Solution: **mini-batch SGD**
-
-![Figure 12: Mini-batch gradient descent](assets/image-11.png)
-
-**Figure 12 intuition:**
-Mini-batches reduce computation and introduce noise that helps escape poor minima.
+for epoch in range(epochs):
+    with tf.GradientTape() as tape:
+        y_pred = model(x_train)
+        loss = compute_loss(y_train, y_pred)
+    grads = tape.gradient(loss, model.trainable_variables)
+    optimizer.apply_gradients(zip(grads, model.trainable_variables))
+```
 
 ---
 
-## 13. Overfitting
+## 8. Backpropagation
 
-A model may perform well on training data but fail to generalize.
+![Backpropagation](assets/image-9.png)
 
-![Figure 13: Overfitting vs generalization](assets/image-12.png)
+Gradients are computed using the **chain rule**, propagating error backward layer by layer.
 
-**Figure 13 intuition:**
-Generalization matters more than training accuracy.
-
----
-
-## 14. Regularization Techniques
-
-### Dropout
-
-![Figure 14: Dropout during training](assets/image-13.png)
-
-**Figure 14 intuition:**
-Randomly disabling neurons forces redundancy and robustness.
+$$\frac{\partial J}{\partial w_1} = \frac{\partial J}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial z_1} \cdot \frac{\partial z_1}{\partial w_1}$$
 
 ---
 
-### Early Stopping
+## 9. Optimizers
 
-![Figure 15: Early stopping based on validation loss](assets/image-14.png)
-
-**Figure 15 intuition:**
-Stop training when validation performance degrades, even if training loss continues to decrease.
+| Optimizer | PyTorch | TensorFlow |
+|-----------|---------|------------|
+| SGD | `torch.optim.SGD(...)` | `tf.keras.optimizers.SGD(...)` |
+| Adam | `torch.optim.Adam(...)` | `tf.keras.optimizers.Adam(...)` |
+| RMSprop | `torch.optim.RMSprop(...)` | `tf.keras.optimizers.RMSprop(...)` |
+| Adagrad | `torch.optim.Adagrad(...)` | `tf.keras.optimizers.Adagrad(...)` |
+| Adadelta | `torch.optim.Adadelta(...)` | `tf.keras.optimizers.Adadelta()` |
 
 ---
 
-## 15. References
+## 10. Stochastic Gradient Descent
 
-* MIT 6.S191 — Introduction to Deep Learning
-  [http://introtodeeplearning.com/](http://introtodeeplearning.com/)
+![SGD](assets/image-11.png)
+
+- Gradients computed on **mini-batches**
+- Faster, memory-efficient, GPU-friendly
+- Adds beneficial noise that improves generalization
+
+---
+
+## 11. Overfitting & Regularization
+
+![Overfitting](assets/image-12.png)
+
+Overfitting occurs when training performance improves but test performance degrades.
+
+### Regularization Techniques
+
+#### Dropout
+
+![Dropout](assets/image-13.png)
+
+- Randomly zeroes activations during training
+- Common dropout rate: 50%
+- Forces robust feature learning
+
+#### Early Stopping
+
+![Early Stopping](assets/image-14.png)
+
+- Stop training when validation loss increases
+- Prevents memorization
+
+
+## 📚 References
+
+- MIT 6.S191: [http://introtodeeplearning.com/](http://introtodeeplearning.com/)
