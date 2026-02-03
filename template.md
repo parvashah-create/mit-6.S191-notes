@@ -37,16 +37,6 @@ def example():
 > [!NOTE]
 > Important insights or caveats mentioned.
 
----
-
-## 🔢 Key Equations / Math
-*Mathematical formulations discussed.*
-
-$$
-y = f(x)
-$$
-
----
 
 ## ❓ Questions & Further Research
 - [ ] Question 1?
@@ -56,4 +46,3 @@ $$
 
 ## 📚 References & Resources
 - [MIT 6.S191 Website](http://introtodeeplearning.com/)
-- [Paper Link](url)
