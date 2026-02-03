@@ -3,10 +3,8 @@
 **Course:** MIT 6.S191 (2025)  
 **Date:** December 15, 2025  
 **Instructor:** Ava Amini
-**Video:**  
-[Link](https://www.youtube.com/watch?v=GvezxUdLrEk&list=PLtBw6njQRU-rwp5__7C0oIVt26ZgjG9NI&index=3)  
-**Slides:**  
-[Link](https://introtodeeplearning.com/2025/slides/6S191_MIT_DeepLearning_L2.pdf)
+**Video:** [Link](https://www.youtube.com/watch?v=GvezxUdLrEk&list=PLtBw6njQRU-rwp5__7C0oIVt26ZgjG9NI&index=3)  
+**Slides:** [Link](https://introtodeeplearning.com/2025/slides/6S191_MIT_DeepLearning_L2.pdf)
 
 ---
 
